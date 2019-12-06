@@ -1,0 +1,25 @@
+---
+title: "structure"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Which state is the most dangerous in United States?
+
+1.The largest number of gun violence rate.
+
+2.What’s wrong with this state?  
+
+ 1) Does this state always have the highest gun rate?
+ 2) Which part of this state is the most dangerous?
+ 3) Does this state have mass shooting?
+ 
+3.Why this state has the highest gun rate?  
+
+ 1) Look at the unemployment rate of the state 
+ 2) Look at the background check data
+
+
