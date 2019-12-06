@@ -1,0 +1,37 @@
+---
+title: "heat_map"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggplot2)
+library(ggmap)
+library(maps)
+library(mapdata)
+```
+
+```{r}
+library(readr)
+library(dplyr)
+
+data <- read_csv("dataset/gun-violence-data_01-2013_03-2018.csv")
+names(data)[15] <- "lat"
+names(data)[17] <- "lon"
+ data$date <- as.character(data$date)
+data <- as.data.frame(data)
+data_new <- data 
+data_new <- as.data.frame(data_new)
+data_new <- data_new %>%
+  filter(state=="California")
+for (i in 1:nrow(data_new)){
+  data_new$date[i] <- substr(data_new$date[i], 1, 4)
+}
+data_new <- data_new %>%
+  filter(date=="2013")
+
+qmplot(lon,lat,data=data_new,colour=I("red"),zoom=9,size = I(0.9),alpha=.3,maptype = "toner")
+```
