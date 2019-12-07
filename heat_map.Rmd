@@ -14,24 +14,62 @@ library(maps)
 library(mapdata)
 ```
 
+
 ```{r}
+#plot heat map
 library(readr)
 library(dplyr)
 
-data <- read_csv("dataset/gun-violence-data_01-2013_03-2018.csv")
+data <- read_csv("~/CU/fall2019/5702/hw/finalproject/edav project data source/gun-violence-data_01-2013_03-2018.csv")
 names(data)[15] <- "lat"
 names(data)[17] <- "lon"
- data$date <- as.character(data$date)
+data$date <- as.character(data$date)
 data <- as.data.frame(data)
 data_new <- data 
 data_new <- as.data.frame(data_new)
 data_new <- data_new %>%
   filter(state=="California")
-for (i in 1:nrow(data_new)){
-  data_new$date[i] <- substr(data_new$date[i], 1, 4)
-}
-data_new <- data_new %>%
-  filter(date=="2013")
+data_new$date <- as.character(data_new$date)
+data_new$date<-as.Date(data_new$date)
+data_new_d<-data_new[which( format(as.Date(data_new$date, format="%d/%m/%Y"),"%Y")=="2013"), ]
 
-qmplot(lon,lat,data=data_new,colour=I("red"),zoom=9,size = I(0.9),alpha=.3,maptype = "toner")
+qmplot(lon,lat,data=data_new_d,colour=I("red"),zoom=8,size = I(0.9),maptype = "toner")
 ```
+
+```{r}
+# plot gun violence
+library(leaflet)
+library(geojsonio)
+library(tigris)
+state=states(cb=T)
+
+bind_data <- read_csv("nics-firearm-background-checks copy.csv")
+bind_data <- bind_data %>% select(2,28)
+names(bind_data)[2] <- "ABBstate"
+
+data_new <- data
+data_new$date <- as.character(data_new$date)
+data_new$date<-as.Date(data_new$date)
+data_new_d<-data_new[which( format(as.Date(data_new$date, format="%d/%m/%Y"),"%Y")=="2013"), ]
+
+data_new_d$sum <- c(1)
+data_new_d$sum <- as.numeric(as.character(data_new_d$n_killed))+as.numeric(as.character(data_new_d$n_injured))
+data_new_d <- as.data.frame(data_new_d)
+data_new_d <- merge(data_new_d,bind_data,by="state")
+
+states_merged_value <- geo_join(state, data_new_d, "STUSPS", "ABBstate")
+bins <- c(0, 2, 4, 6, 8, 10,12,14,16,Inf)
+pal <- colorBin("YlOrRd", domain=states_merged_value$sum,bins = bins)
+m <- leaflet() %>%
+  addTiles() %>%
+  setView( -98.483330, 38.712046, zoom = 4 ) %>%
+  addPolygons(
+    data = states_merged_value,
+
+    fillColor = ~pal(sum),
+    weight = 1, 
+    highlight=highlightOptions(weight=10, color="blue",bringToFront=TRUE)
+  )
+m
+```
+
