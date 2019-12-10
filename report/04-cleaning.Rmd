@@ -1,0 +1,13 @@
+# Data transformation
+
+In this part, we would like clean dataset to get the useful data, and plot them to show useful information. 
+
+## Gun Violence Data
+
+Our entry point is gun violence data, we want to show gun violence rate in the United States. We sumed columns "n_killed" and "n_injured" of every incident, and divide the population of this state. In each plot, we filter the data by Year, 
+
+## Gun Background Check Data
+
+## Population Data
+
+## GDP Data

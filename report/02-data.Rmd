@@ -1,2 +1,42 @@
 # Data sources
 
+In this project, we used several data sources. 
+
+## Gun violence Data
+
+This dataset about gun violence is "Gun Violence Data", we get this dataset from [kaggle](https://www.kaggle.com/jameslko/gun-violence-data), the original dataset is from [gunviolencearchive.org](https://www.gunviolencearchive.org/). Since the data from GVA limits the number of incidents that are returned from a single query, and the website's "Export to CSV" functionality was missing crucial fields, it's not ready to be used. So, we use the data from kaggle, these data was obtained using web scraping. And we obtained the meaning of each column from GVA. 
+
+This size of this dataset is 239677 $\times$ 29. This data set has 29 variables, 
+```{r include=FALSE}
+library(readr)
+data <- read_csv("~/CU/fall2019/5702/hw/finalproject/edav project data source/gun-violence-data_01-2013_03-2018.csv")
+```
+
+```{r}
+colnames(data)
+```
+
+We used variables like "date", "state", "# killed", "# injured", "longitude" and "latitude". 
+
+## Gun background check Data
+
+This dataset is about gun background check, we obtained this data from [github](https://github.com/BuzzFeedNews/nics-firearm-background-checks/blob/master/README.md). The original dataset is from [National Instant Criminal Background Check System](https://www.fbi.gov/services/cjis/nics). Since the original dataset from FBI is in PDF form, we use the data from github. 
+
+The size of this data is 13860 $\times$ 29. This dataset has 29 variables, 
+```{r include=FALSE}
+data <- read_csv("/Users/fanzining/EDAV-final-project/nics-firearm-background-checks copy.csv")
+```
+
+```{r}
+colnames(data)
+```
+
+We are only interested in the total number of the gun background data "totals". The last column "X28" is the abbreviation of states. 
+
+## Population Data
+
+The population data was obtained from [Census](https://www.census.gov/newsroom/press-kits/2018/pop-estimates-national-state.html). Since the number of gun violence and background check is based on population, we would like to look rate numbers rather than total numbers. 
+
+## GDP Data
+
+We would also like to find whether gun violence has something to do with ecomonic data. So we used GDP of each state to reflect the economic situation. We obtained this data about GDP from [Bureau of Economic Analysis](https://www.bea.gov/data/gdp/gdp-state).
