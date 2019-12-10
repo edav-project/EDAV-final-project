@@ -1,0 +1,241 @@
+---
+title: "pre_process"
+author: "hs3160"
+date: "November 27, 2019"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(stringr)
+library(GGally)
+library(parcoords)
+library(tidyr)
+library(r2d3)
+library(dplyr)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+```{r}
+# gun_vio=read.csv("dataset/gun-violence-data_01-2013_03-2018.csv")
+gun_vio=read.csv("dataset/gun_violence_2013.3-2018.3.csv")
+gun_vio["year"]=str_sub( as.character(gun_vio$date),1,4)
+gun_vio<-gun_vio[which(as.numeric(as.character(gun_vio$year))>2013)  ,]
+back_check=read.csv("dataset/nics-firearm-background-checks copy.csv")
+GDP<-read.csv("dataset/GDP_states.csv")
+GDP_sub<-subset(GDP,select=-c("X","GeoFIPS","Region","TableName","IndustryId","IndustryClassification"))
+uem_month=read.csv("dataset/unemployment_states_by_month.csv")
+population_tp=read.csv("dataset/clean_population_by_state.csv")
+population<-select(population_tp,2,3,4)
+
+gun_vio$date<-as.Date(gun_vio$date)
+gun_vio$state<-as.character(gun_vio$state)
+
+back_check$month<-as.character(back_check$month)
+back_check["year"]=str_sub(back_check$month,1,4)
+```
+
+
+```{r}
+uem_month<-subset(uem_month, select=-c(X))
+uem_month <- uem_month%>%
+  mutate(month = fct_recode(uem_month$Period,
+                             "1"="Jan",
+                             "2"="Feb",
+                            "3"="Mar",
+                             "4"="Apr" ,
+                            "5"="May",
+                            "6"="Jun",
+                           "7"= "Jul",
+                            "8"="Aug",
+                            "9"="Sep",
+                            "10"="Oct",
+                            "11"="Nov",
+                            "12"="Dec"))
+
+uem_month$month<-as.numeric(uem_month$month)
+uem_month$unemployment.rate<-as.numeric(uem_month$unemployment.rate)
+uem_month$State<-as.character(uem_month$State)
+```
+
+
+<!-- ```{r} -->
+<!-- uemploymentRate<-function(uem_month,year,state) -->
+<!-- { -->
+<!--   uem_year<-uem_month[ which(uem_month$Year==year -->
+<!-- & uem_month$State==state), ] -->
+<!--   uem_year$month <-as.numeric(uem_year$month) -->
+<!--   uem_year <-uem_year[order(uem_year$month),] -->
+<!--   g1=ggplot(uem_year,aes(x=month,y=unemployment.rate))+ -->
+<!--     geom_line() -->
+<!--   return(g1) -->
+<!-- } -->
+<!-- uemploymentRate(uem_month,"2013","California") -->
+<!-- ``` -->
+
+
+<!-- ```{r} -->
+<!-- gun_vio$date<-as.Date(gun_vio$date) -->
+<!-- gun_vio$state<-as.character(gun_vio$state) -->
+<!-- gunViolence<-function(gun_vio,year,state) -->
+<!-- { -->
+<!--   gun_vio_state<-gun_vio[ which( format(as.Date(gun_vio$date, format="%d/%m/%Y"),"%Y")==year -->
+<!-- & gun_vio$state==state), ] -->
+<!--   gun_vio_state$month<-format(as.Date(gun_vio_state$date, format="%d/%m/%Y"),"%m") -->
+
+<!--   gun_vio_state$n_killed<-as.numeric(gun_vio_state$n_killed) -->
+<!--   gun_vio_state$n_injured<-as.numeric(gun_vio_state$n_injured) -->
+<!--   month_tmp<-subset(gun_vio_state,select=c(month, n_killed,n_injured)) -->
+
+<!--   total_n_killed<-month_tmp%>% -->
+<!--     group_by(month_tmp$month)%>% -->
+<!--     summarize(total_n_killed=sum(n_killed)) -->
+<!--   total_n_injured<-month_tmp%>% -->
+<!--     group_by(month_tmp$month)%>% -->
+<!--     summarize(total_n_injured=sum(n_injured)) -->
+<!--   total<-total_n_killed -->
+<!--   total$total_n_injured<-total_n_injured$total_n_injured -->
+<!--   colnames(total)<-c("month","total_n_killed","total_n_injured") -->
+<!--   total$month<-as.numeric(total$month) -->
+<!--   total<-as.data.frame(total) -->
+<!--   g1<-ggplot()+ -->
+<!--     geom_line(data=total,aes(x=month, y=total_n_killed),color="blue")+ -->
+<!--     geom_line(data=total,aes(x=month, y=total_n_injured),color="red") -->
+<!--   return(g1) -->
+<!-- } -->
+
+<!-- gunViolence(gun_vio,"2013","California") -->
+
+<!-- ``` -->
+
+
+<!-- ```{r} -->
+<!-- back_check$month<-as.character(back_check$month) -->
+<!-- back_check["year"]=str_sub(back_check$month,1,4) -->
+<!-- Cleveland<-function(gun_vio,back_check,unem_rate,GDP,year) -->
+<!-- { -->
+<!--   # year=2018 -->
+<!--   year<-as.character(year) -->
+<!--   back_check_year<-back_check[ which(back_check$year==year), ] -->
+<!--   back_check_state<-back_check_year%>% -->
+<!--     group_by(year,state)%>% -->
+<!--     summarize(total_year=sum(totals)) -->
+<!--   gun_vio$date<-as.Date(gun_vio$date) -->
+<!--   gun_vio_tp<-gun_vio[which( format(as.Date(gun_vio$date, format="%d/%m/%Y"),"%Y")==year), ] -->
+<!--   gun_vio_tp<-subset(gun_vio_tp,select=c("date","state","n_killed","n_injured")) -->
+<!--   gun_vio_tp["n_sum"]<-as.numeric(gun_vio_tp$n_killed)+as.numeric(gun_vio_tp$n_injured) -->
+<!--   gun_vio_state<-gun_vio_tp%>% -->
+<!--     group_by(state)%>% -->
+<!--     summarize(n=sum(n_sum)) -->
+<!--   check_vio<-merge(back_check_state, gun_vio_state, by.x="state", by.y="state") -->
+
+<!--   check_vio$total_year<-scale(check_vio$total_year) -->
+<!--   check_vio$n<-scale(check_vio$n) -->
+
+<!--   check_vio_gather=check_vio%>%  -->
+<!--   gather( "total_year",   "n",-state,-year) -->
+
+<!--   check_vio_gather$total_year<-as.character(check_vio_gather$total_year) -->
+<!--   check_vio_gather$n<-as.numeric(check_vio_gather$n) -->
+
+<!--   ggplot(check_vio_gather, aes(x = n, -->
+<!--                                y = fct_reorder2(state, total_year == "total_year", n, .desc = FALSE), -->
+<!--                                color = total_year)) + -->
+<!--     geom_point() + -->
+<!--     ylab("") + -->
+<!--     ggtitle("# of fatalities per million traffic miles") -->
+<!-- } -->
+
+<!-- Cleveland(gun_vio,back_check,unem_rate,GDP,2016) -->
+<!-- ``` -->
+
+```{r}
+library("ggmap")
+TimePlot<-function(gun_vio,back_check,population,state)
+{
+  gun_vio$date<-as.Date(gun_vio$date)
+  gun_vio_tp<-gun_vio[which( gun_vio$state==state), ]
+  gun_vio_tp<-subset(gun_vio_tp,select=c("date","state","n_killed","n_injured"))
+  gun_vio_tp["year"]<-format(as.Date(gun_vio_tp$date, format="%d/%m/%Y"),"%Y")
+  gun_vio_tp["month"]<-format(as.Date(gun_vio_tp$date, format="%d/%m/%Y"),"%m")
+  
+  population_sub<-population[which(population$State==state),]
+  
+  gun_vio_tp$n_killed<-as.numeric(as.character(gun_vio_tp$n_killed))
+  gun_vio_tp$n_injured<-as.numeric(as.character(gun_vio_tp$n_injured))
+  gun_vio_tp["n_sum"]<-gun_vio_tp$n_killed+gun_vio_tp$n_injured
+  gun_vio_month<-gun_vio_tp%>%
+    group_by(month,year)%>%
+    summarize(n_killed=sum(n_killed),n_injured=sum(n_injured),n_sum=sum(n_sum))
+  gun_vio_month["date_by_month"]= str_c(as.character(gun_vio_month$year),"-",as.character(gun_vio_month$month),"-1")
+  gun_vio_month$date_by_month<-as.Date( gun_vio_month$date_by_month)
+
+  merge(gun_vio_month,population_sub,by.x="year",by.y="Year")
+  
+  gun_vio_tp$n_sum<-as.numeric(as.character(gun_vio_tp$n_sum))
+  gun_vio_tp$date<-as.Date(gun_vio_tp$date)
+  
+  ggplot(gun_vio_month)+
+    geom_line(aes(x=date_by_month,y=n_sum))+
+    ggtitle("Gun Violence from Jan,2014 to Mar,2018")
+}
+
+TimePlot(gun_vio,back_check,population,"California")
+  
+```
+
+
+```{r}
+back_check$month<-as.character(back_check$month)
+back_check["year"]=str_sub(back_check$month,1,4)
+Parcoord<-function(gun_vio,back_check,uem_month,GDP,year)
+{
+  year=2018
+  year<-as.character(year)
+  back_check_year<-back_check[ which(back_check$year==year), ]
+  back_check_state<-back_check_year%>%
+    group_by(year,state)%>%
+    summarize(total_year=sum(totals))
+  
+  gun_vio$date<-as.Date(gun_vio$date)
+  gun_vio_tp<-gun_vio[which( format(as.Date(gun_vio$date, format="%d/%m/%Y"),"%Y")==year), ]
+  gun_vio_tp<-subset(gun_vio_tp,select=c("date","state","n_killed","n_injured"))
+  gun_vio_tp["n_sum"]<-as.numeric(gun_vio_tp$n_killed)+as.numeric(gun_vio_tp$n_injured)
+  gun_vio_state<-gun_vio_tp%>%
+    group_by(state)%>%
+    summarize(n=sum(n_sum))
+
+  check_vio<-merge(back_check_state, gun_vio_state, by.x="state", by.y="state")
+  
+  uem_month$State<-str_trim(uem_month$State)
+  uem_rate<-uem_month[which(uem_month$Year==year), ]
+  uem_rate$State<-str_trim(uem_rate$State)
+  
+  GDP_year<-subset(GDP,select=c("GeoName",str_c("X",year)))
+  colnames(GDP_year)<-c("State","GDP_total")
+  population_sub<-population[which(population$Year==year),]
+  GDP_avg=merge(GDP_year,population_sub,by.x="State",by.y="State")
+  GDP_avg["GDP_avg"]=GDP_avg$GDP_total*1000000/GDP_avg$population
+    
+  check_vio_uem<-merge(check_vio, GDP_avg, by.x="state", by.y="State")
+
+  colnames(check_vio_uem)<-c("state","year","checking_totals","gun_violence_death","GDP_total","Year", "population",  "GDP_avg")
+
+  parcoords(check_vio_uem[c("state","checking_totals","gun_violence_death","GDP_avg")],rownames = FALSE,reorder = TRUE, brushMode="1D",alpha = .3, color = list(colorScale = "scaleOrdinal",colorBy = "state", colorScheme = "schemeCategory10"), withD3 = TRUE)
+  
+  ggpairs(check_vio_uem[c("checking_totals","gun_violence_death","GDP_avg")])
+}
+Parcoord(gun_vio,back_check,uem_month,GDP,"2016")
+```
+
+
