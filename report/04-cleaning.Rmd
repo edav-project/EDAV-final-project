@@ -1,0 +1,17 @@
+# Data Cleaning
+
+In this part, we would like clean dataset to get the useful data, and plot them to show useful information. 
+
+## Gun Violence Data
+
+Our entry point is gun violence data, we want to show gun violence rate in the United States. We sumed columns "n_killed" and "n_injured" of every incident, and divide the population of this state. In each plot, we filter the data by Year, calculate the sum of total rates of killed as well as injured. 
+
+In the plot of each state,we used the columns "Longitude" and "Latitude" to get the specific spot of every incident. Then we filter the data by Year and state, each incident is plotted as a red dot on map. 
+
+## Gun Background Check Data
+
+## Population Data
+
+We cleaned the population data to transform it into the population by state and by year. The cleaned data is in the folder of "dataset", named "clean_population_by_state" and "clean_population_by_year". 
+
+## GDP Data

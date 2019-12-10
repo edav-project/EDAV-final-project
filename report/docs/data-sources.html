@@ -52,6 +52,68 @@
 
 
 
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -70,8 +132,18 @@
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
-<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a></li>
-<li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a></li>
+<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a><ul>
+<li class="chapter" data-level="2.1" data-path="data-sources.html"><a href="data-sources.html#gun-violence-data"><i class="fa fa-check"></i><b>2.1</b> Gun violence Data</a></li>
+<li class="chapter" data-level="2.2" data-path="data-sources.html"><a href="data-sources.html#gun-background-check-data"><i class="fa fa-check"></i><b>2.2</b> Gun background check Data</a></li>
+<li class="chapter" data-level="2.3" data-path="data-sources.html"><a href="data-sources.html#population-data"><i class="fa fa-check"></i><b>2.3</b> Population Data</a></li>
+<li class="chapter" data-level="2.4" data-path="data-sources.html"><a href="data-sources.html#gdp-data"><i class="fa fa-check"></i><b>2.4</b> GDP Data</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a><ul>
+<li class="chapter" data-level="3.1" data-path="data-transformation.html"><a href="data-transformation.html#gun-violence-data-1"><i class="fa fa-check"></i><b>3.1</b> Gun Violence Data</a></li>
+<li class="chapter" data-level="3.2" data-path="data-transformation.html"><a href="data-transformation.html#gun-background-check-data-1"><i class="fa fa-check"></i><b>3.2</b> Gun Background Check Data</a></li>
+<li class="chapter" data-level="3.3" data-path="data-transformation.html"><a href="data-transformation.html#population-data-1"><i class="fa fa-check"></i><b>3.3</b> Population Data</a></li>
+<li class="chapter" data-level="3.4" data-path="data-transformation.html"><a href="data-transformation.html#gdp-data-1"><i class="fa fa-check"></i><b>3.4</b> GDP Data</a></li>
+</ul></li>
 <li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing values</a></li>
 <li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a></li>
 <li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a></li>
@@ -97,7 +169,59 @@
             <section class="normal" id="section-">
 <div id="data-sources" class="section level1">
 <h1><span class="header-section-number">Chapter 2</span> Data sources</h1>
+<p>In this project, we used several data sources.</p>
+<div id="gun-violence-data" class="section level2">
+<h2><span class="header-section-number">2.1</span> Gun violence Data</h2>
+<p>This dataset about gun violence is “Gun Violence Data”, we get this dataset from <a href="https://www.kaggle.com/jameslko/gun-violence-data">kaggle</a>, the original dataset is from <a href="https://www.gunviolencearchive.org/">gunviolencearchive.org</a>. Since the data from GVA limits the number of incidents that are returned from a single query, and the website’s “Export to CSV” functionality was missing crucial fields, it’s not ready to be used. So, we use the data from kaggle, these data was obtained using web scraping. And we obtained the meaning of each column from GVA.</p>
+<p>This size of this dataset is 239677 <span class="math inline">\(\times\)</span> 29. This data set has 29 variables,</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">colnames</span>(data)</a></code></pre></div>
+<pre><code>##  [1] &quot;incident_id&quot;                 &quot;date&quot;                       
+##  [3] &quot;state&quot;                       &quot;city_or_county&quot;             
+##  [5] &quot;address&quot;                     &quot;n_killed&quot;                   
+##  [7] &quot;n_injured&quot;                   &quot;incident_url&quot;               
+##  [9] &quot;source_url&quot;                  &quot;incident_url_fields_missing&quot;
+## [11] &quot;congressional_district&quot;      &quot;gun_stolen&quot;                 
+## [13] &quot;gun_type&quot;                    &quot;incident_characteristics&quot;   
+## [15] &quot;latitude&quot;                    &quot;location_description&quot;       
+## [17] &quot;longitude&quot;                   &quot;n_guns_involved&quot;            
+## [19] &quot;notes&quot;                       &quot;participant_age&quot;            
+## [21] &quot;participant_age_group&quot;       &quot;participant_gender&quot;         
+## [23] &quot;participant_name&quot;            &quot;participant_relationship&quot;   
+## [25] &quot;participant_status&quot;          &quot;participant_type&quot;           
+## [27] &quot;sources&quot;                     &quot;state_house_district&quot;       
+## [29] &quot;state_senate_district&quot;</code></pre>
+<p>We used variables like “date”, “state”, “# killed”, “# injured”, “longitude” and “latitude”.</p>
+</div>
+<div id="gun-background-check-data" class="section level2">
+<h2><span class="header-section-number">2.2</span> Gun background check Data</h2>
+<p>This dataset is about gun background check, we obtained this data from <a href="https://github.com/BuzzFeedNews/nics-firearm-background-checks/blob/master/README.md">github</a>. The original dataset is from <a href="https://www.fbi.gov/services/cjis/nics">National Instant Criminal Background Check System</a>. Since the original dataset from FBI is in PDF form, we use the data from github.</p>
+<p>The size of this data is 13860 <span class="math inline">\(\times\)</span> 29. This dataset has 29 variables,</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">colnames</span>(data)</a></code></pre></div>
+<pre><code>##  [1] &quot;month&quot;                     &quot;state&quot;                    
+##  [3] &quot;permit&quot;                    &quot;permit_recheck&quot;           
+##  [5] &quot;handgun&quot;                   &quot;long_gun&quot;                 
+##  [7] &quot;other&quot;                     &quot;multiple&quot;                 
+##  [9] &quot;admin&quot;                     &quot;prepawn_handgun&quot;          
+## [11] &quot;prepawn_long_gun&quot;          &quot;prepawn_other&quot;            
+## [13] &quot;redemption_handgun&quot;        &quot;redemption_long_gun&quot;      
+## [15] &quot;redemption_other&quot;          &quot;returned_handgun&quot;         
+## [17] &quot;returned_long_gun&quot;         &quot;returned_other&quot;           
+## [19] &quot;rentals_handgun&quot;           &quot;rentals_long_gun&quot;         
+## [21] &quot;private_sale_handgun&quot;      &quot;private_sale_long_gun&quot;    
+## [23] &quot;private_sale_other&quot;        &quot;return_to_seller_handgun&quot; 
+## [25] &quot;return_to_seller_long_gun&quot; &quot;return_to_seller_other&quot;   
+## [27] &quot;totals&quot;                    &quot;X28&quot;</code></pre>
+<p>We are only interested in the total number of the gun background data “totals”. The last column “X28” is the abbreviation of states.</p>
+</div>
+<div id="population-data" class="section level2">
+<h2><span class="header-section-number">2.3</span> Population Data</h2>
+<p>The population data was obtained from <a href="https://www.census.gov/newsroom/press-kits/2018/pop-estimates-national-state.html">Census</a>. Since the number of gun violence and background check is based on population, we would like to look rate numbers rather than total numbers.</p>
+</div>
+<div id="gdp-data" class="section level2">
+<h2><span class="header-section-number">2.4</span> GDP Data</h2>
+<p>We would also like to find whether gun violence has something to do with ecomonic data. So we used GDP of each state to reflect the economic situation. We obtained this data about GDP from <a href="https://www.bea.gov/data/gdp/gdp-state">Bureau of Economic Analysis</a>.</p>
 
+</div>
 </div>
             </section>
 
@@ -124,12 +248,11 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
-"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -144,6 +267,10 @@ gitbook.start({
 "link": null,
 "text": null
 },
+"view": {
+"link": "https://github.com/ZiningFan00/GunViolenceReport/blob/master/02-data.Rmd",
+"text": null
+},
 "download": null,
 "toc": {
 "collapse": "subsection"
@@ -152,6 +279,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>
