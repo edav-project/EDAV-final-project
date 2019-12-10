@@ -33,39 +33,44 @@ gun_vio["year"]=str_sub( as.character(gun_vio$date),1,4)
 gun_vio<-gun_vio[which(as.numeric(as.character(gun_vio$year))>2013)  ,]
 back_check=read.csv("dataset/nics-firearm-background-checks copy.csv")
 GDP<-read.csv("dataset/GDP_states.csv")
-GDP_sub<-subset(GDP,select=-c("X","GeoFIPS","Region","TableName","IndustryId","IndustryClassification"))
-uem_month=read.csv("dataset/unemployment_states_by_month.csv")
+GDP_sub<-GDP %>% select(-c(1,2,4,5,6,7,8,9))
+
+#uem_month=read.csv("dataset/unemployment_states_by_month.csv")
 population_tp=read.csv("dataset/clean_population_by_state.csv")
 population<-select(population_tp,2,3,4)
+population$State<-str_sub(as.character(population$State),2)
 
 gun_vio$date<-as.Date(gun_vio$date)
 gun_vio$state<-as.character(gun_vio$state)
 
 back_check$month<-as.character(back_check$month)
 back_check["year"]=str_sub(back_check$month,1,4)
+
+gun_vio["year"]<-format(as.Date(gun_vio$date, format="%d/%m/%Y"),"%Y")
+gun_vio["month"]<-format(as.Date(gun_vio$date, format="%d/%m/%Y"),"%m")
 ```
 
 
 ```{r}
-uem_month<-subset(uem_month, select=-c(X))
-uem_month <- uem_month%>%
-  mutate(month = fct_recode(uem_month$Period,
-                             "1"="Jan",
-                             "2"="Feb",
-                            "3"="Mar",
-                             "4"="Apr" ,
-                            "5"="May",
-                            "6"="Jun",
-                           "7"= "Jul",
-                            "8"="Aug",
-                            "9"="Sep",
-                            "10"="Oct",
-                            "11"="Nov",
-                            "12"="Dec"))
-
-uem_month$month<-as.numeric(uem_month$month)
-uem_month$unemployment.rate<-as.numeric(uem_month$unemployment.rate)
-uem_month$State<-as.character(uem_month$State)
+# uem_month<-subset(uem_month, select=-c(X))
+# uem_month <- uem_month%>%
+#   mutate(month = fct_recode(uem_month$Period,
+#                              "1"="Jan",
+#                              "2"="Feb",
+#                             "3"="Mar",
+#                              "4"="Apr" ,
+#                             "5"="May",
+#                             "6"="Jun",
+#                            "7"= "Jul",
+#                             "8"="Aug",
+#                             "9"="Sep",
+#                             "10"="Oct",
+#                             "11"="Nov",
+#                             "12"="Dec"))
+# 
+# uem_month$month<-as.numeric(uem_month$month)
+# uem_month$unemployment.rate<-as.numeric(uem_month$unemployment.rate)
+# uem_month$State<-as.character(uem_month$State)
 ```
 
 
@@ -161,14 +166,12 @@ uem_month$State<-as.character(uem_month$State)
 
 ```{r}
 library("ggmap")
-TimePlot<-function(gun_vio,back_check,population,state)
+TimePlot<-function(gun_vio,population,state)
 {
   gun_vio$date<-as.Date(gun_vio$date)
   gun_vio_tp<-gun_vio[which( gun_vio$state==state), ]
-  gun_vio_tp<-subset(gun_vio_tp,select=c("date","state","n_killed","n_injured"))
-  gun_vio_tp["year"]<-format(as.Date(gun_vio_tp$date, format="%d/%m/%Y"),"%Y")
-  gun_vio_tp["month"]<-format(as.Date(gun_vio_tp$date, format="%d/%m/%Y"),"%m")
-  
+  gun_vio_tp<-subset(gun_vio_tp,select=c("date","state","n_killed","n_injured","month","year"))
+
   population_sub<-population[which(population$State==state),]
   
   gun_vio_tp$n_killed<-as.numeric(as.character(gun_vio_tp$n_killed))
@@ -177,11 +180,10 @@ TimePlot<-function(gun_vio,back_check,population,state)
   gun_vio_month<-gun_vio_tp%>%
     group_by(month,year)%>%
     summarize(n_killed=sum(n_killed),n_injured=sum(n_injured),n_sum=sum(n_sum))
-  gun_vio_month["date_by_month"]= str_c(as.character(gun_vio_month$year),"-",as.character(gun_vio_month$month),"-1")
+  
+  gun_vio_month["date_by_month"]=    str_c(as.character(gun_vio_month$year),"-",as.character(gun_vio_month$month),"-1")
   gun_vio_month$date_by_month<-as.Date( gun_vio_month$date_by_month)
 
-  merge(gun_vio_month,population_sub,by.x="year",by.y="Year")
-  
   gun_vio_tp$n_sum<-as.numeric(as.character(gun_vio_tp$n_sum))
   gun_vio_tp$date<-as.Date(gun_vio_tp$date)
   
@@ -190,15 +192,14 @@ TimePlot<-function(gun_vio,back_check,population,state)
     ggtitle("Gun Violence from Jan,2014 to Mar,2018")
 }
 
-TimePlot(gun_vio,back_check,population,"California")
+TimePlot(gun_vio,population,"California")
   
 ```
 
 
 ```{r}
-back_check$month<-as.character(back_check$month)
-back_check["year"]=str_sub(back_check$month,1,4)
-Parcoord<-function(gun_vio,back_check,uem_month,GDP,year)
+
+Parcoord<-function(gun_vio,back_check,GDP,year)
 {
   year=2018
   year<-as.character(year)
@@ -217,11 +218,12 @@ Parcoord<-function(gun_vio,back_check,uem_month,GDP,year)
 
   check_vio<-merge(back_check_state, gun_vio_state, by.x="state", by.y="state")
   
-  uem_month$State<-str_trim(uem_month$State)
-  uem_rate<-uem_month[which(uem_month$Year==year), ]
-  uem_rate$State<-str_trim(uem_rate$State)
+  # uem_month$State<-str_trim(uem_month$State)
+  # uem_rate<-uem_month[which(uem_month$Year==year), ]
+  # uem_rate$State<-str_trim(uem_rate$State)
   
   GDP_year<-subset(GDP,select=c("GeoName",str_c("X",year)))
+  
   colnames(GDP_year)<-c("State","GDP_total")
   population_sub<-population[which(population$Year==year),]
   GDP_avg=merge(GDP_year,population_sub,by.x="State",by.y="State")
@@ -235,7 +237,7 @@ Parcoord<-function(gun_vio,back_check,uem_month,GDP,year)
   
   ggpairs(check_vio_uem[c("checking_totals","gun_violence_death","GDP_avg")])
 }
-Parcoord(gun_vio,back_check,uem_month,GDP,"2016")
+Parcoord(gun_vio,back_check,GDP,"2016")
 ```
 
 
