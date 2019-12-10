@@ -35,7 +35,7 @@ We are only interested in the total number of the gun background data "totals". 
 
 ## Population Data
 
-The population data was obtained from [Census](https://www.census.gov/newsroom/press-kits/2018/pop-estimates-national-state.html). Since the number of gun violence and background check is based on population, we would like to look rate numbers rather than total numbers. 
+The population data was obtained from [Census](https://www.census.gov/newsroom/press-kits/2018/pop-estimates-national-state.html). Since the number of gun violence and background check is based on population, we would like to look rate numbers rather than total numbers. We only got the population of each state from year 2010 to year 2018. 
 
 ## GDP Data
 
