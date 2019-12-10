@@ -33,7 +33,8 @@ data_new$date <- as.character(data_new$date)
 data_new$date<-as.Date(data_new$date)
 data_new_d<-data_new[which( format(as.Date(data_new$date, format="%d/%m/%Y"),"%Y")=="2013"), ]
 
-qmplot(lon,lat,data=data_new_d,colour=I("red"),zoom=8,size = I(0.9),maptype = "toner")
+qmplot(lon,lat,data=data_new_d,colour=I("red"),size = I(0.8),alpha=0.3,main="Gun violence Map")+
+  theme(legend.position="none")
 ```
 
 ```{r}
