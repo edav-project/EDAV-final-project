@@ -31,7 +31,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="missing-values.html"/>
+<link rel="prev" href="data-cleaning.html"/>
 <link rel="next" href="interactive-component.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -52,6 +52,68 @@
 
 
 
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -70,10 +132,30 @@
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
-<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a></li>
-<li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a></li>
-<li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing values</a></li>
-<li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a></li>
+<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a><ul>
+<li class="chapter" data-level="2.1" data-path="data-sources.html"><a href="data-sources.html#gun-violence-data"><i class="fa fa-check"></i><b>2.1</b> Gun violence Data</a></li>
+<li class="chapter" data-level="2.2" data-path="data-sources.html"><a href="data-sources.html#gun-background-check-data"><i class="fa fa-check"></i><b>2.2</b> Gun background check Data</a></li>
+<li class="chapter" data-level="2.3" data-path="data-sources.html"><a href="data-sources.html#population-data"><i class="fa fa-check"></i><b>2.3</b> Population Data</a></li>
+<li class="chapter" data-level="2.4" data-path="data-sources.html"><a href="data-sources.html#gdp-data"><i class="fa fa-check"></i><b>2.4</b> GDP Data</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>3</b> Missing values</a></li>
+<li class="chapter" data-level="4" data-path="data-cleaning.html"><a href="data-cleaning.html"><i class="fa fa-check"></i><b>4</b> Data Cleaning</a><ul>
+<li class="chapter" data-level="4.1" data-path="data-cleaning.html"><a href="data-cleaning.html#gun-violence-data-1"><i class="fa fa-check"></i><b>4.1</b> Gun Violence Data</a></li>
+<li class="chapter" data-level="4.2" data-path="data-cleaning.html"><a href="data-cleaning.html#gun-background-check-data-1"><i class="fa fa-check"></i><b>4.2</b> Gun Background Check Data</a></li>
+<li class="chapter" data-level="4.3" data-path="data-cleaning.html"><a href="data-cleaning.html#population-data-1"><i class="fa fa-check"></i><b>4.3</b> Population Data</a></li>
+<li class="chapter" data-level="4.4" data-path="data-cleaning.html"><a href="data-cleaning.html#gdp-data-1"><i class="fa fa-check"></i><b>4.4</b> GDP Data</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a><ul>
+<li class="chapter" data-level="5.1" data-path="results.html"><a href="results.html#exploring-the-gun-violence-data"><i class="fa fa-check"></i><b>5.1</b> Exploring the Gun Violence Data</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="results.html"><a href="results.html#how-many-people-are-injured-in-gun-violence-every-year-every-state"><i class="fa fa-check"></i><b>5.1.1</b> How many people are injured in gun violence every year every state?</a></li>
+<li class="chapter" data-level="5.1.2" data-path="results.html"><a href="results.html#where-does-these-gun-violence-happen"><i class="fa fa-check"></i><b>5.1.2</b> Where does these gun violence happen?</a></li>
+<li class="chapter" data-level="5.1.3" data-path="results.html"><a href="results.html#is-the-violence-rate-stable"><i class="fa fa-check"></i><b>5.1.3</b> Is the violence rate stable?</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="results.html"><a href="results.html#effects-of-gun-possesion"><i class="fa fa-check"></i><b>5.2</b> Effects of Gun Possesion</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="results.html"><a href="results.html#how-does-the-gun-change-rate-influence-the-gun-violence-status"><i class="fa fa-check"></i><b>5.2.1</b> How does the gun change rate influence the gun violence status?</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="results.html"><a href="results.html#effects-of-gdp-data"><i class="fa fa-check"></i><b>5.3</b> Effects of GDP data</a></li>
+</ul></li>
 <li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a></li>
 <li class="chapter" data-level="7" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>7</b> Conclusion</a></li>
 <li class="divider"></li>
@@ -97,14 +179,63 @@
             <section class="normal" id="section-">
 <div id="results" class="section level1">
 <h1><span class="header-section-number">Chapter 5</span> Results</h1>
+<div id="exploring-the-gun-violence-data" class="section level2">
+<h2><span class="header-section-number">5.1</span> Exploring the Gun Violence Data</h2>
+<p>We start from an interesting question: Where is the least gun threaded state in the US? Then we would like explore the gun violence data, hoping to find the answers from sub questions.</p>
+<div id="how-many-people-are-injured-in-gun-violence-every-year-every-state" class="section level3">
+<h3><span class="header-section-number">5.1.1</span> How many people are injured in gun violence every year every state?</h3>
+<p>Number of Gun Violence Incidents by States facet by years</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">gun_vio_states&lt;-gun_vio<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(state,year)<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">incident_number=</span><span class="kw">n</span>())</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">gun_vio_states&lt;-<span class="kw">as.data.frame</span>(gun_vio_states)</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb1-6" data-line-number="6">gun_vio_adjust =<span class="st"> </span><span class="kw">merge</span>(gun_vio_states,population, <span class="dt">by.x=</span><span class="kw">c</span>(<span class="st">&quot;state&quot;</span>, <span class="st">&quot;year&quot;</span>), <span class="dt">by.y=</span><span class="kw">c</span>(<span class="st">&quot;state&quot;</span>, <span class="st">&quot;year&quot;</span>))</a>
+<a class="sourceLine" id="cb1-7" data-line-number="7">gun_vio_adjust[<span class="st">&quot;incident_num_avg&quot;</span>]&lt;-gun_vio_adjust<span class="op">$</span>incident_number<span class="op">/</span>gun_vio_adjust<span class="op">$</span>population<span class="op">*</span><span class="dv">100000</span></a>
+<a class="sourceLine" id="cb1-8" data-line-number="8">gun_vio_adjust&lt;-<span class="kw">select</span>(gun_vio_adjust,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb1-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb1-10" data-line-number="10"><span class="kw">ggplot</span>(gun_vio_adjust,<span class="kw">aes</span>(<span class="dt">x=</span> <span class="kw">fct_reorder</span>(state, incident_num_avg)   ,<span class="dt">y=</span>incident_num_avg))<span class="op">+</span></a>
+<a class="sourceLine" id="cb1-11" data-line-number="11"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">position =</span> <span class="st">&quot;dodge&quot;</span>, <span class="dt">stat =</span> <span class="st">&quot;identity&quot;</span>)<span class="op">+</span></a>
+<a class="sourceLine" id="cb1-12" data-line-number="12"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>year)<span class="op">+</span></a>
+<a class="sourceLine" id="cb1-13" data-line-number="13"><span class="st">  </span><span class="kw">coord_flip</span>()<span class="op">+</span></a>
+<a class="sourceLine" id="cb1-14" data-line-number="14"><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Gun Violence by States from 2014-2018&quot;</span>)<span class="op">+</span></a>
+<a class="sourceLine" id="cb1-15" data-line-number="15"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y=</span><span class="st">&quot;States&quot;</span>)</a></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
+<div id="where-does-these-gun-violence-happen" class="section level3">
+<h3><span class="header-section-number">5.1.2</span> Where does these gun violence happen?</h3>
+<p>Then, we zoomed the map to find the exact location of each gun incident. We ploted each event as a red dot on the map. The following plot shows the gun violence in California in 2013,</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">qmplot</span>(lon,lat,<span class="dt">data=</span>data_new,<span class="dt">colour=</span><span class="kw">I</span>(<span class="st">&quot;red&quot;</span>),<span class="dt">zoom=</span><span class="dv">9</span>,<span class="dt">size =</span> <span class="kw">I</span>(<span class="fl">0.9</span>),<span class="dt">alpha=</span>.<span class="dv">3</span>,<span class="dt">maptype =</span> <span class="st">&quot;toner-lite&quot;</span>,<span class="dt">main =</span> <span class="st">&quot;Gun violence in California in 2013&quot;</span>)<span class="op">+</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position=</span><span class="st">&quot;none&quot;</span>)</a></code></pre></div>
+<pre><code>## Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under ODbL.</code></pre>
+<pre><code>## 117 tiles needed, this may take a while (try a smaller zoom).</code></pre>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_point).</code></pre>
+<p><img src="_main_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>As we could see from this plot, the gun violence incident is clustered at cities and roads, which means that gun violences is mostly happen where people are.</p>
+</div>
+<div id="is-the-violence-rate-stable" class="section level3">
+<h3><span class="header-section-number">5.1.3</span> Is the violence rate stable?</h3>
+</div>
+</div>
+<div id="effects-of-gun-possesion" class="section level2">
+<h2><span class="header-section-number">5.2</span> Effects of Gun Possesion</h2>
+<p>Since the numbers of firearm possesions are different among states, it might have something to do with the gun violence.</p>
+<div id="how-does-the-gun-change-rate-influence-the-gun-violence-status" class="section level3">
+<h3><span class="header-section-number">5.2.1</span> How does the gun change rate influence the gun violence status?</h3>
+</div>
+</div>
+<div id="effects-of-gdp-data" class="section level2">
+<h2><span class="header-section-number">5.3</span> Effects of GDP data</h2>
+<p>We also would like to find whether there is something to do with the ecnomic situation. We used GDP of each state to represent the economic situation.</p>
 
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="missing-values.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="data-cleaning.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 <a href="interactive-component.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
@@ -124,12 +255,11 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
-"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -142,6 +272,10 @@ gitbook.start({
 },
 "history": {
 "link": null,
+"text": null
+},
+"view": {
+"link": "https://github.com/ZiningFan00/GunViolenceReport/blob/master/05-results.Rmd",
 "text": null
 },
 "download": null,

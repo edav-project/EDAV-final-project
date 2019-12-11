@@ -1,1 +1,103 @@
 # Results
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r include=FALSE}
+library(ggplot2)
+library(tidyverse)
+library(stringr)
+library(GGally)
+library(parcoords)
+library(tidyr)
+library(r2d3)
+library(dplyr)
+library(ggmap)
+library(maps)
+library(mapdata)
+library(readr)
+```
+
+```{r include=FALSE}
+# gun_vio=read.csv("dataset/gun-violence-data_01-2013_03-2018.csv")
+gun_vio=read.csv("../dataset/gun_violence_2013.3-2018.3.csv")
+gun_vio["year"]=str_sub( as.character(gun_vio$date),1,4)
+gun_vio<-gun_vio[which(as.numeric(as.character(gun_vio$year))>2013)  ,]
+back_check=read.csv("../dataset/nics-firearm-background-checks copy.csv")
+GDP<-read.csv("../dataset/GDP_states.csv")
+GDP_sub<-GDP %>% select(-c(1,2,4,5,6,7,8,9))
+
+#uem_month=read.csv("dataset/unemployment_states_by_month.csv")
+population_tp=read.csv("../dataset/clean_population_by_state.csv")
+population<-select(population_tp,2,3,4)
+
+gun_vio$date<-as.Date(gun_vio$date)
+gun_vio$state<-as.character(gun_vio$state)
+
+back_check$month<-as.character(back_check$month)
+back_check["year"]=str_sub(back_check$month,1,4)
+
+gun_vio["year"]<-format(as.Date(gun_vio$date, format="%d/%m/%Y"),"%Y")
+gun_vio["month"]<-format(as.Date(gun_vio$date, format="%d/%m/%Y"),"%m")
+```
+
+## Exploring the Gun Violence Data
+
+We start from an interesting question: Where is the least gun threaded state in the US? Then we would like explore the gun violence data, hoping to find the answers from sub questions. 
+
+### How many people are injured in gun violence every year every state?
+
+Number of Gun Violence Incidents by States facet by years
+```{r,fig.height=10,fig.width=7}
+gun_vio_states<-gun_vio%>%
+  group_by(state,year)%>%
+  summarize(incident_number=n())
+gun_vio_states<-as.data.frame(gun_vio_states)
+
+gun_vio_adjust = merge(gun_vio_states,population, by.x=c("state", "year"), by.y=c("state", "year"))
+gun_vio_adjust["incident_num_avg"]<-gun_vio_adjust$incident_number/gun_vio_adjust$population*100000
+gun_vio_adjust<-select(gun_vio_adjust,1,2,5)
+
+ggplot(gun_vio_adjust,aes(x= fct_reorder(state, incident_num_avg)   ,y=incident_num_avg))+
+  geom_bar(position = "dodge", stat = "identity")+
+  facet_wrap(~year)+
+  coord_flip()+
+  ggtitle("Gun Violence by States from 2014-2018")+
+  labs(y="States")
+```
+
+### Where does these gun violence happen?
+
+Then, we zoomed the map to find the exact location of each gun incident. We ploted each event as a red dot on the map. The following plot shows the gun violence in California in 2013, 
+
+```{r include=FALSE}
+data <- read_csv("../dataset/gun-violence-data_01-2013_03-2018.csv")
+names(data)[15] <- "lat"
+names(data)[17] <- "lon"
+data$date <- as.character(data$date)
+data_new <- data %>%
+  filter(state=="California")
+data_new["year"]=str_sub( as.character(data_new$date),1,4)
+data_new <- data_new %>%
+  filter(year=="2013")
+```
+
+```{r}
+qmplot(lon,lat,data=data_new,colour=I("red"),zoom=9,size = I(0.9),alpha=.3,maptype = "toner-lite",main = "Gun violence in California in 2013")+
+  theme(legend.position="none")
+```
+
+As we could see from this plot, the gun violence incident is clustered at cities and roads, which means that gun violences is mostly happen where people are. 
+
+### Is the violence rate stable?
+
+## Effects of Gun Possesion
+
+Since the numbers of firearm possesions are different among states, it might have something to do with the gun violence. 
+
+### How does the gun change rate influence the gun violence status?
+
+## Effects of GDP data
+
+We also would like to find whether there is something to do with the ecnomic situation. We used GDP of each state to represent the economic situation. 
