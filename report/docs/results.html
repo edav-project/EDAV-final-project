@@ -24,7 +24,7 @@
 <meta name="author" content="Zining Fan, Xin Guo, Huiyu Song, Xiao Ji" />
 
 
-<meta name="date" content="2019-12-10" />
+<meta name="date" content="2019-12-11" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -147,9 +147,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a><ul>
 <li class="chapter" data-level="5.1" data-path="results.html"><a href="results.html#exploring-the-gun-violence-data"><i class="fa fa-check"></i><b>5.1</b> Exploring the Gun Violence Data</a><ul>
-<li class="chapter" data-level="5.1.1" data-path="results.html"><a href="results.html#how-many-people-are-injured-in-gun-violence-every-year-every-state"><i class="fa fa-check"></i><b>5.1.1</b> How many people are injured in gun violence every year every state?</a></li>
-<li class="chapter" data-level="5.1.2" data-path="results.html"><a href="results.html#where-does-these-gun-violence-happen"><i class="fa fa-check"></i><b>5.1.2</b> Where does these gun violence happen?</a></li>
-<li class="chapter" data-level="5.1.3" data-path="results.html"><a href="results.html#is-the-violence-rate-stable"><i class="fa fa-check"></i><b>5.1.3</b> Is the violence rate stable?</a></li>
+<li class="chapter" data-level="5.1.1" data-path="results.html"><a href="results.html#how-many-gun-violence-incidents-happened-every-year-in-each-state"><i class="fa fa-check"></i><b>5.1.1</b> How many gun violence incidents happened every year in each state?</a></li>
+<li class="chapter" data-level="5.1.2" data-path="results.html"><a href="results.html#how-many-people-get-injured"><i class="fa fa-check"></i><b>5.1.2</b> How many people get injured?</a></li>
+<li class="chapter" data-level="5.1.3" data-path="results.html"><a href="results.html#where-does-these-gun-violence-happen"><i class="fa fa-check"></i><b>5.1.3</b> Where does these gun violence happen?</a></li>
+<li class="chapter" data-level="5.1.4" data-path="results.html"><a href="results.html#which-kind-of-gun-violence-is-the-most-common"><i class="fa fa-check"></i><b>5.1.4</b> Which kind of gun violence is the most common?</a></li>
+<li class="chapter" data-level="5.1.5" data-path="results.html"><a href="results.html#is-the-violence-rate-stable"><i class="fa fa-check"></i><b>5.1.5</b> Is the violence rate stable?</a></li>
 </ul></li>
 <li class="chapter" data-level="5.2" data-path="results.html"><a href="results.html#effects-of-gun-possesion"><i class="fa fa-check"></i><b>5.2</b> Effects of Gun Possesion</a><ul>
 <li class="chapter" data-level="5.2.1" data-path="results.html"><a href="results.html#how-does-the-gun-change-rate-influence-the-gun-violence-status"><i class="fa fa-check"></i><b>5.2.1</b> How does the gun change rate influence the gun violence status?</a></li>
@@ -182,39 +184,52 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="exploring-the-gun-violence-data" class="section level2">
 <h2><span class="header-section-number">5.1</span> Exploring the Gun Violence Data</h2>
 <p>We start from an interesting question: Where is the least gun threaded state in the US? Then we would like explore the gun violence data, hoping to find the answers from sub questions.</p>
-<div id="how-many-people-are-injured-in-gun-violence-every-year-every-state" class="section level3">
-<h3><span class="header-section-number">5.1.1</span> How many people are injured in gun violence every year every state?</h3>
-<p>Number of Gun Violence Incidents by States facet by years</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">gun_vio_states&lt;-gun_vio<span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(state,year)<span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">incident_number=</span><span class="kw">n</span>())</a>
-<a class="sourceLine" id="cb1-4" data-line-number="4">gun_vio_states&lt;-<span class="kw">as.data.frame</span>(gun_vio_states)</a>
-<a class="sourceLine" id="cb1-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb1-6" data-line-number="6">gun_vio_adjust =<span class="st"> </span><span class="kw">merge</span>(gun_vio_states,population, <span class="dt">by.x=</span><span class="kw">c</span>(<span class="st">&quot;state&quot;</span>, <span class="st">&quot;year&quot;</span>), <span class="dt">by.y=</span><span class="kw">c</span>(<span class="st">&quot;state&quot;</span>, <span class="st">&quot;year&quot;</span>))</a>
-<a class="sourceLine" id="cb1-7" data-line-number="7">gun_vio_adjust[<span class="st">&quot;incident_num_avg&quot;</span>]&lt;-gun_vio_adjust<span class="op">$</span>incident_number<span class="op">/</span>gun_vio_adjust<span class="op">$</span>population<span class="op">*</span><span class="dv">100000</span></a>
-<a class="sourceLine" id="cb1-8" data-line-number="8">gun_vio_adjust&lt;-<span class="kw">select</span>(gun_vio_adjust,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">5</span>)</a>
-<a class="sourceLine" id="cb1-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb1-10" data-line-number="10"><span class="kw">ggplot</span>(gun_vio_adjust,<span class="kw">aes</span>(<span class="dt">x=</span> <span class="kw">fct_reorder</span>(state, incident_num_avg)   ,<span class="dt">y=</span>incident_num_avg))<span class="op">+</span></a>
-<a class="sourceLine" id="cb1-11" data-line-number="11"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">position =</span> <span class="st">&quot;dodge&quot;</span>, <span class="dt">stat =</span> <span class="st">&quot;identity&quot;</span>)<span class="op">+</span></a>
-<a class="sourceLine" id="cb1-12" data-line-number="12"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>year)<span class="op">+</span></a>
-<a class="sourceLine" id="cb1-13" data-line-number="13"><span class="st">  </span><span class="kw">coord_flip</span>()<span class="op">+</span></a>
-<a class="sourceLine" id="cb1-14" data-line-number="14"><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Gun Violence by States from 2014-2018&quot;</span>)<span class="op">+</span></a>
-<a class="sourceLine" id="cb1-15" data-line-number="15"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y=</span><span class="st">&quot;States&quot;</span>)</a></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<div id="how-many-gun-violence-incidents-happened-every-year-in-each-state" class="section level3">
+<h3><span class="header-section-number">5.1.1</span> How many gun violence incidents happened every year in each state?</h3>
+<p>We calculate the the sum of of incidents number of each state from 2014 to 2018, the plots are shown below,</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">grid.arrange</span>(sum_<span class="dv">2014</span>,sum_<span class="dv">2015</span>,sum_<span class="dv">2016</span>,sum_<span class="dv">2017</span>,sum_<span class="dv">2018</span>,<span class="dt">ncol=</span><span class="dv">2</span>)</a></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-4-1.png" width="864" /></p>
+<p>The bar in 2018 is shorter than the bars in other years, it’s because we only have the record from Jan to March in 2018. We could find that in 2014 and 2018, California has the most incident number; while in 2015, 2016 and 2017, Illinois has the most incident number. But, does the large number comes from the large population? Maybe it’s better to calculate the incident number per 100000 person. The plots are shown below,</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">grid.arrange</span>(avg_<span class="dv">2014</span>,avg_<span class="dv">2015</span>,avg_<span class="dv">2016</span>,avg_<span class="dv">2017</span>,avg_<span class="dv">2018</span>,<span class="dt">ncol=</span><span class="dv">2</span>)</a></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-6-1.png" width="864" /></p>
+<p>The resultes turns out very different, District of Columbia moves to the top of the bar from 2014 to 2018; Alaska becomes the second most in 2015 and 2016. It might because the population number in these states are quite small.</p>
+</div>
+<div id="how-many-people-get-injured" class="section level3">
+<h3><span class="header-section-number">5.1.2</span> How many people get injured?</h3>
+<p>The gun violence may includes mass shooting.In every incident, the number of people who are injured or killed are different, we want to explore this number. The plot is shown below,</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">grid.arrange</span>(sum_n_<span class="dv">2014</span>,sum_n_<span class="dv">2015</span>,sum_n_<span class="dv">2016</span>,sum_n_<span class="dv">2017</span>,sum_n_<span class="dv">2018</span>,<span class="dt">ncol=</span><span class="dv">2</span>)</a></code></pre></div>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_bar).</code></pre>
+<pre><code>## Warning: Removed 2 rows containing missing values (geom_bar).
+
+## Warning: Removed 2 rows containing missing values (geom_bar).</code></pre>
+<p><img src="_main_files/figure-html/unnamed-chunk-8-1.png" width="864" /></p>
+<p>We could see that not all the states appears, which means that there is no record in that state in that state. The bar in 2018 is shorter than the bars in other years, it’s because we only have the record from Jan to March in 2018. Then we would like to look at the this number per 100000 person. The plots are shown below,</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">grid.arrange</span>(avg_n_<span class="dv">2014</span>,avg_n_<span class="dv">2015</span>,avg_n_<span class="dv">2016</span>,avg_n_<span class="dv">2017</span>,avg_n_<span class="dv">2018</span>,<span class="dt">ncol=</span><span class="dv">2</span>)</a></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-10-1.png" width="864" /></p>
 </div>
 <div id="where-does-these-gun-violence-happen" class="section level3">
-<h3><span class="header-section-number">5.1.2</span> Where does these gun violence happen?</h3>
+<h3><span class="header-section-number">5.1.3</span> Where does these gun violence happen?</h3>
 <p>Then, we zoomed the map to find the exact location of each gun incident. We ploted each event as a red dot on the map. The following plot shows the gun violence in California in 2013,</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">qmplot</span>(lon,lat,<span class="dt">data=</span>data_new,<span class="dt">colour=</span><span class="kw">I</span>(<span class="st">&quot;red&quot;</span>),<span class="dt">zoom=</span><span class="dv">9</span>,<span class="dt">size =</span> <span class="kw">I</span>(<span class="fl">0.9</span>),<span class="dt">alpha=</span>.<span class="dv">3</span>,<span class="dt">maptype =</span> <span class="st">&quot;toner-lite&quot;</span>,<span class="dt">main =</span> <span class="st">&quot;Gun violence in California in 2013&quot;</span>)<span class="op">+</span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position=</span><span class="st">&quot;none&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">qmplot</span>(lon,lat,<span class="dt">data=</span>data_new,<span class="dt">colour=</span><span class="kw">I</span>(<span class="st">&quot;red&quot;</span>),<span class="dt">zoom=</span><span class="dv">9</span>,<span class="dt">size =</span> <span class="kw">I</span>(<span class="fl">0.9</span>),<span class="dt">alpha=</span>.<span class="dv">3</span>,<span class="dt">maptype =</span> <span class="st">&quot;toner-lite&quot;</span>,<span class="dt">main =</span> <span class="st">&quot;Gun violence in California in 2013&quot;</span>)<span class="op">+</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position=</span><span class="st">&quot;none&quot;</span>)</a></code></pre></div>
 <pre><code>## Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under ODbL.</code></pre>
 <pre><code>## 117 tiles needed, this may take a while (try a smaller zoom).</code></pre>
 <pre><code>## Warning: Removed 1 rows containing missing values (geom_point).</code></pre>
-<p><img src="_main_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 <p>As we could see from this plot, the gun violence incident is clustered at cities and roads, which means that gun violences is mostly happen where people are.</p>
 </div>
+<div id="which-kind-of-gun-violence-is-the-most-common" class="section level3">
+<h3><span class="header-section-number">5.1.4</span> Which kind of gun violence is the most common?</h3>
+<p>We look at the key characteristics of gun violence incidents, sum the same kind of incidents from 2014 to 2018 in every state, the plot is shown below,</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">character_sum_df<span class="op">%&gt;%</span><span class="kw">filter</span>(value<span class="op">&gt;</span><span class="dv">1000</span>)<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span> <span class="kw">fct_reorder</span>(key, value)   ,<span class="dt">y=</span>value))<span class="op">+</span></a>
+<a class="sourceLine" id="cb11-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">position =</span> <span class="st">&quot;dodge&quot;</span>, <span class="dt">stat =</span> <span class="st">&quot;identity&quot;</span>)<span class="op">+</span></a>
+<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="st">  </span><span class="kw">coord_flip</span>()<span class="op">+</span></a>
+<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Key characteristics of Gun Violence Incidents&quot;</span>)</a></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-14-1.png" width="576" /></p>
+</div>
 <div id="is-the-violence-rate-stable" class="section level3">
-<h3><span class="header-section-number">5.1.3</span> Is the violence rate stable?</h3>
+<h3><span class="header-section-number">5.1.5</span> Is the violence rate stable?</h3>
 </div>
 </div>
 <div id="effects-of-gun-possesion" class="section level2">
