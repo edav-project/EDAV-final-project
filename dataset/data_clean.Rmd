@@ -77,3 +77,4 @@ data_new_d <- merge(data_new_d,bind_data,by="state")
 write_csv(data_new_d,file="clean")
 ```
 
+
