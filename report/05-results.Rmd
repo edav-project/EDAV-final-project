@@ -43,6 +43,8 @@ population<-select(population_tp,2,3,4)
 
 back_check$month<-as.character(back_check$month)
 back_check["year"]=str_sub(back_check$month,1,4)
+
+states_party<-read.csv("../dataset/states_party.csv")
 ```
 
 ## Exploring the Gun Violence Data
@@ -306,6 +308,32 @@ qmplot(lon,lat,data=data_new,colour=I("red"),zoom=9,size = I(0.9),alpha=.3,mapty
 
 As we could see from this plot, the gun violence incident is clustered at cities and roads, which means that gun violences is mostly happen where people are. 
 
+Then we separated the US into two parts by Democratic Party and Republican Party. Does the gun violence has something to do the party. We used boxplot trying to answer this question. The boxplots are shown below, 
+
+```{r include=FALSE}
+gun_vio_n_adjust = merge(gun_vio,population, by.x=c("state", "year"), by.y=c("state", "year"))
+
+gun_vio_n_adjust['sum_killed_avg']<-(as.numeric(as.character(gun_vio_n_adjust$n_killed))+ as.numeric(as.character(gun_vio_n_adjust$n_injured)) )/as.numeric(as.character(gun_vio_n_adjust$population))*100000
+gun_vio_n_adjust<-select(gun_vio_n_adjust,1,2,3,10,11,12)
+
+gun_vio_n_adjust<-select(gun_vio_n_adjust,-3)
+gun_vio_n_adjust_group<-gun_vio_n_adjust%>%
+  group_by(year,month,state)%>%
+  summarize("sum_killed_avg"=sum(sum_killed_avg))
+gun_vio_n_adjust_group<-as.data.frame(gun_vio_n_adjust_group)
+gun_vio_n_adjust_group_mrg<-merge(gun_vio_n_adjust_group,states_party,by.x='state',by.y='State')
+
+library(plotly)
+p <- plot_ly(gun_vio_n_adjust_group_mrg, y = ~sum_killed_avg, color = ~Parties, title="Gun Violence by Parties",colors = c('blue',  'red'),type = "box") %>%
+  layout(title="Boxplot of people killed/injured per 100,000 person by Party")
+```
+
+```{r}
+p
+```
+
+In the above plot, each dot represents a state, y-axis represents the average number of people who get injured or killed of each state. The boxplots give us very interesting information. There are many outliers in Democratic Party, but the average number in Democratic Party states is lower than the states in Republican Party. 
+
 ### Which kind of gun violence is the most common?
 
 Then, we look at the type of each incident, which is represented by key characteristics of gun violence incidents. We sum the same kind of incidents from 2014 to 2018 in every state, the plot is shown below, 
@@ -384,19 +412,13 @@ gun_vio_day_new<-gun_vio_day%>%
   summarize('incident_number'=sum(incident_number),'sum_killed'=sum(sum_killed),'sum_injured'=sum(sum_injured))
 gun_vio_day_new["adjusted_date"]<-as.Date( str_c(gun_vio_day_new$year,"-",gun_vio_day_new$month,"-15")  )
 
-p <- ggplot(gun_vio_day_new)+
-  geom_line(aes(x=adjusted_date,y=incident_number,color="incident_number"))+
-  stat_smooth(aes(x=adjusted_date,y=incident_number,color="incident_number"))+
-  geom_line(aes(x=adjusted_date,y=sum_killed,color="sum_killed"))+
-  stat_smooth(aes(x=adjusted_date,y=sum_killed,color="sum_killed"))+
-  geom_line(aes(x=adjusted_date,y=sum_injured,color="sum_injured"))+
-  stat_smooth(aes(x=adjusted_date,y=sum_injured,color="sum_injured"))+
- scale_fill_discrete(name = "Variables", labels = c("incident_number", "sum_injured", "sum_killed"))+
-  ggtitle("Time Series of Gun Violence")+
-  xlab("date")
+p <- plot_ly(gun_vio_day_new, x = ~adjusted_date, y = ~incident_number, name = 'incident_number', type = 'scatter', mode = 'lines') %>%
+  add_trace(y = ~sum_killed, name = 'sum_killed', mode = 'lines+markers') %>%
+  add_trace(y = ~sum_injured, name = 'sum_injured', mode = 'lines')
+
 ```
 
-```{r,fig.width=7}
+```{r,fig.width=8}
 p
 ```
 
@@ -410,28 +432,33 @@ Since the numbers of firearm possesions are different among states, it might hav
 
 ## Effects of GDP data
 
-We also would like to find whether there is something to do with the ecnomic situation. We used GDP of each state to represent the economic situation. 
+We also would like to find whether there is something to do with the ecnomic situation. We choosed to use GDP of each state to represent the economic situation. We extracted the GDP of the United States of year 2017 and the incident number of each state in 2017. In the scatterplot, each dot is a state, x-axis is GDP of this state, y-axis is incident of this state. 
 
-```{r}
-GDP_2014 <- GDP_sub %>%
-  select(1,20)
-gun_vio_n_2014 <- gun_vio_n %>%
-  filter(year=="2014")
-GDP_2014 <- merge(GDP_2014,gun_vio_n_2014,by.x = "GeoName",by.y = "state")
-p <- plot_ly(data = GDP_2014, x = ~X2014, y = ~total_TOLL,
+```{r include=FALSE}
+GDP_2017 <- GDP_sub %>%
+  select(1,23)
+gun_vio_n_2017 <- gun_vio_n %>%
+  filter(year=="2017")
+GDP_2017 <- merge(GDP_2017,gun_vio_n_2017,by.x = "GeoName",by.y = "state")
+GDP_2017_plot <- plot_ly(data = GDP_2017, x = ~X2017, y = ~total_TOLL,
         marker = list(size = 10,
                        color = 'rgba(255, 182, 193, .9)',
                        line = list(color = 'rgba(152, 0, 0, .8)',
                                    width = 2))) %>%
-  layout(title = 'Styled Scatter',
+  layout(title = 'GDP-incident number-2017',
          yaxis = list(zeroline = FALSE),
          xaxis = list(zeroline = FALSE))
-p
 ```
 
-## Combine these variables
-
 ```{r}
+GDP_2017_plot
+```
+
+## Combining these variables
+
+Now, we introduced gun violence data, background check data as well as GDP data. How do these variabled combine with each other? We use parallel coordinates charts to show their relations.
+
+```{r include=FALSE}
 Parcoord<-function(year)
 {
   year<-as.character(year)
@@ -466,19 +493,27 @@ Parcoord<-function(year)
 
   colnames(check_vio_uem)<-c("state","year","checking_totals","gun_violence_death","GDP_total","Year", "population",  "GDP_avg")
   
-  # check_vio_uem_party<-merge(check_vio_uem,states_party,by.x='state',by.y='State')
-  # 
   check_vio_uem<-check_vio_uem%>%
     filter(!is.na(gun_violence_death))
   
   parcoords(check_vio_uem[c("state","checking_totals","gun_violence_death","GDP_avg")],rownames = FALSE,reorder = TRUE, brushMode="1D",alpha = .3, color = list(colorScale = "scaleOrdinal",colorBy = "state", colorScheme = "schemeCategory10"), withD3 = TRUE)
-  
-    # parcoords(check_vio_uem_party[c("Parties","checking_totals","gun_violence_death","GDP_avg")],rownames = FALSE,reorder = TRUE, brushMode="1D",alpha = .3, color = list(colorScale = "scaleOrdinal",colorBy = "Parties", colorScheme = "schemeCategory10"), withD3 = TRUE)
-  # ggpairs(check_vio_uem[c("checking_totals","gun_violence_death","GDP_avg")])
 }
-Parcoord("2014")
-Parcoord("2015")
-Parcoord("2016")
-Parcoord("2017")
+```
 
+```{r}
+Parcoord("2014")
+```
+
+From this plot of year 2014, we could find that most lines are at the bottom of this plot. Kentucky has the largest number of background check, while Illinois and California has the largest number of death. 
+
+```{r}
+Parcoord("2015")
+```
+
+```{r}
+Parcoord("2016")
+```
+
+```{r}
+Parcoord("2017")
 ```
