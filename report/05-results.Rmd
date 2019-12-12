@@ -18,6 +18,7 @@ library(maps)
 library(mapdata)
 library(readr)
 library(gridExtra)
+library(plotly)
 ```
 
 ```{r include=FALSE}
@@ -42,8 +43,6 @@ population<-select(population_tp,2,3,4)
 
 back_check$month<-as.character(back_check$month)
 back_check["year"]=str_sub(back_check$month,1,4)
-
-
 ```
 
 ## Exploring the Gun Violence Data
@@ -106,7 +105,7 @@ sum_2018 <- ggplot(gun_vio_states_2018 ,aes(x=fct_reorder(state,incident_number)
   labs(y="incident number",x="States")
 ```
 
-```{r,fig.height=15,fig.width=9}
+```{r,fig.height=16,fig.width=9}
 grid.arrange(sum_2014,sum_2015,sum_2016,sum_2017,sum_2018,ncol=2)
 ```
 
@@ -165,7 +164,7 @@ avg_2018 <- ggplot(gun_vio_adjust_2018 ,aes(x=fct_reorder(state,incident_num_avg
   labs(y="average incident number",x="States")
 ```
 
-```{r,fig.height=15,fig.width=9}
+```{r,fig.height=16,fig.width=9}
 grid.arrange(avg_2014,avg_2015,avg_2016,avg_2017,avg_2018,ncol=2)
 ```
 
@@ -219,11 +218,11 @@ sum_n_2018 <- ggplot(gun_vio_n_2018 ,aes(x=fct_reorder(state,total_TOLL),y=total
   labs(y="incident number",x="States")
 ```
 
-```{r,fig.height=15,fig.width=9}
+```{r,fig.height=16,fig.width=9}
 grid.arrange(sum_n_2014,sum_n_2015,sum_n_2016,sum_n_2017,sum_n_2018,ncol=2)
 ```
 
-The bar in 2018 is shorter than the bars in other years, it's because we only have the record from Jan to March in 2018. Then we would like to look at the this number per 100000 person. The plots are shown below, 
+The bar in 2018 is shorter than the bars in other years, it's because we only have the record from Jan to March in 2018. We could find the pattern is quite similar to the pattern of incident number, Illinois has the largest number from 2015 to 2018; California has the largest number in 2014. Then we would like to look at the this number per 100000 person. The plots are shown below, 
 
 ```{r include=FALSE}
 gun_vio_n_adjust = merge(gun_vio_n,population, by.x=c("state", "year"), by.y=c("state", "year"))
@@ -279,14 +278,15 @@ avg_n_2018 <- ggplot(gun_vio_adjust_2018 ,aes(x=fct_reorder(state,sum_killed_avg
   labs(y="average incident number",x="States")
 ```
 
-```{r,fig.height=15,fig.width=9}
+```{r,fig.height=16,fig.width=9}
 grid.arrange(avg_n_2014,avg_n_2015,avg_n_2016,avg_n_2017,avg_n_2018,ncol=2)
 ```
 
+This pattern is also similar to the pattern of incident number per 100000 person, District of Columbia is at the top of the bar chart from 2014 to 2018. 
+
 ### Where does these gun violence happen?
 
-Then, we zoomed the map to find the exact location of each gun incident. We ploted each event as a red dot on the map. The following plot shows the gun violence in California in 2013, 
-
+Then, we zoomed in the map to find the exact location of each gun incident. We ploted each event as a red dot on the map. The following plot shows the gun violence in California in 2013, 
 ```{r include=FALSE}
 data <- read_csv("../dataset/gun-violence-data_01-2013_03-2018.csv")
 names(data)[15] <- "lat"
@@ -299,7 +299,7 @@ data_new <- data_new %>%
   filter(year=="2013")
 ```
 
-```{r}
+```{r,fig.height=6,fig.width=4}
 qmplot(lon,lat,data=data_new,colour=I("red"),zoom=9,size = I(0.9),alpha=.3,maptype = "toner-lite",main = "Gun violence in California in 2013")+
   theme(legend.position="none")
 ```
@@ -308,13 +308,13 @@ As we could see from this plot, the gun violence incident is clustered at cities
 
 ### Which kind of gun violence is the most common?
 
-We look at the key characteristics of gun violence incidents, sum the same kind of incidents from 2014 to 2018 in every state, the plot is shown below, 
+Then, we look at the type of each incident, which is represented by key characteristics of gun violence incidents. We sum the same kind of incidents from 2014 to 2018 in every state, the plot is shown below, 
 
 ```{r include=FALSE}
 character<-gun_character
 character['Mass Shooting']<-str_detect(character$incident_characteristics,'Mass Shooting')
-character['Shot - Wounded/Injured']<-str_detect(character$incident_characteristics,'Shot - Wounded/Injured')
-character['Shot - Dead (murder, accidental, suicide)']<-str_detect(character$incident_characteristics,'Shot - Dead')
+character['Shot_Wounded/Injured']<-str_detect(character$incident_characteristics,'Shot - Wounded/Injured')
+character['Shot_Dead (murder, accidental, suicide)']<-str_detect(character$incident_characteristics,'Shot - Dead')
 character['Possession (gun(s) found during commission of other crimes)']<-str_detect(character$incident_characteristics,'found during commission of other crimes')
 character['Possession of gun by felon or prohibited person']<-str_detect(character$incident_characteristics,'Possession of gun by felon or prohibited person')
 character['Drug involvement']<-str_detect(character$incident_characteristics,'Drug involvement')
@@ -355,10 +355,52 @@ character_sum_df%>%filter(value>1000)%>%
 ggplot(aes(x= fct_reorder(key, value)   ,y=value))+
   geom_bar(position = "dodge", stat = "identity")+
   coord_flip()+
-  ggtitle("Key characteristics of Gun Violence Incidents")
+  ggtitle("Key characteristics")+
+  xlab("key characteristics")
 ```
 
-### Is the violence rate stable?
+From the plot above, we could find that there are many different types of incidents. The most common type of incident is  shot-wounded/injured, the second commen type of is shot-murder. 
+
+### When does gun violence happen?
+
+Then we would like to explore the data in time series. Does the gun viooence incidents are more likely to happen in sepcific time? we plot each gun violence incident by time from 2014 to 2018, 
+
+```{r include=FALSE}
+gun_vio$n_killed<-as.numeric(as.character(gun_vio$n_killed))
+gun_vio$n_injured<-as.numeric(as.character(gun_vio$n_injured))
+gun_vio<-gun_vio%>%
+  filter(!is.na(n_killed) | !is.na(n_injured))
+gun_vio_day<-gun_vio%>%
+  group_by(date,year)%>%
+  summarize('incident_number'=n(),'sum_killed'=sum(n_killed),'sum_injured'=sum(n_injured))
+gun_vio_day <- gun_vio_day %>%
+  filter(!is.na(sum_killed) | !is.na(sum_injured))
+gun_vio_day<-as.data.frame(gun_vio_day)
+gun_vio_day$date<-as.character(gun_vio_day$date)
+gun_vio_day["month"]=str_sub(gun_vio_day$date,6,7)
+gun_vio_day$date<-as.Date(gun_vio_day$date)
+gun_vio_day_new<-gun_vio_day%>%
+  group_by(year,month)%>%
+  summarize('incident_number'=sum(incident_number),'sum_killed'=sum(sum_killed),'sum_injured'=sum(sum_injured))
+gun_vio_day_new["adjusted_date"]<-as.Date( str_c(gun_vio_day_new$year,"-",gun_vio_day_new$month,"-15")  )
+
+p <- ggplot(gun_vio_day_new)+
+  geom_line(aes(x=adjusted_date,y=incident_number,color="incident_number"))+
+  stat_smooth(aes(x=adjusted_date,y=incident_number,color="incident_number"))+
+  geom_line(aes(x=adjusted_date,y=sum_killed,color="sum_killed"))+
+  stat_smooth(aes(x=adjusted_date,y=sum_killed,color="sum_killed"))+
+  geom_line(aes(x=adjusted_date,y=sum_injured,color="sum_injured"))+
+  stat_smooth(aes(x=adjusted_date,y=sum_injured,color="sum_injured"))+
+ scale_fill_discrete(name = "Variables", labels = c("incident_number", "sum_injured", "sum_killed"))+
+  ggtitle("Time Series of Gun Violence")+
+  xlab("date")
+```
+
+```{r,fig.width=7}
+p
+```
+
+The above plot shows the sum of incident number, number of killed and number of injured of each month from 2014 to 2018. We could find that there are some peaks in this plot. We are very surprised to find that peaks are always in summer, in june and August. We guessed that it might because people are easy to lose their mind when it's hot. 
 
 ## Effects of Gun Possesion
 
@@ -369,3 +411,74 @@ Since the numbers of firearm possesions are different among states, it might hav
 ## Effects of GDP data
 
 We also would like to find whether there is something to do with the ecnomic situation. We used GDP of each state to represent the economic situation. 
+
+```{r}
+GDP_2014 <- GDP_sub %>%
+  select(1,20)
+gun_vio_n_2014 <- gun_vio_n %>%
+  filter(year=="2014")
+GDP_2014 <- merge(GDP_2014,gun_vio_n_2014,by.x = "GeoName",by.y = "state")
+p <- plot_ly(data = GDP_2014, x = ~X2014, y = ~total_TOLL,
+        marker = list(size = 10,
+                       color = 'rgba(255, 182, 193, .9)',
+                       line = list(color = 'rgba(152, 0, 0, .8)',
+                                   width = 2))) %>%
+  layout(title = 'Styled Scatter',
+         yaxis = list(zeroline = FALSE),
+         xaxis = list(zeroline = FALSE))
+p
+```
+
+## Combine these variables
+
+```{r}
+Parcoord<-function(year)
+{
+  year<-as.character(year)
+  back_check_year<-back_check[ which(back_check$year==year), ]
+  back_check_state<-back_check_year%>%
+    group_by(year,state)%>%
+    summarize(total_year=sum(totals))
+  
+  gun_vio$date<-as.Date(gun_vio$date)
+  gun_vio_tp<-gun_vio[which( format(as.Date(gun_vio$date, format="%d/%m/%Y"),"%Y")==year), ]
+  gun_vio_tp<-subset(gun_vio_tp,select=c("date","state","n_killed","n_injured"))
+  gun_vio_tp["n_sum"]<-as.numeric(gun_vio_tp$n_killed)+as.numeric(gun_vio_tp$n_injured)
+  gun_vio_state<-gun_vio_tp%>%
+    group_by(state)%>%
+    summarize(n=sum(n_sum))
+
+  check_vio<-merge(back_check_state, gun_vio_state, by.x="state", by.y="state")
+  
+  # uem_month$State<-str_trim(uem_month$State)
+  # uem_rate<-uem_month[which(uem_month$Year==year), ]
+  # uem_rate$State<-str_trim(uem_rate$State)
+  
+  GDP_year<-subset(GDP,select=c("GeoName",str_c("X",year)))
+  
+  colnames(GDP_year)<-c("state","GDP_total")
+  population$year<-as.character(population$year)
+  population_sub<-population[which(population$year==year),]
+  GDP_avg=merge(GDP_year,population_sub,by.x="state",by.y="state")
+  GDP_avg["GDP_avg"]=GDP_avg$GDP_total*1000000/GDP_avg$population
+    
+  check_vio_uem<-merge(check_vio, GDP_avg, by.x="state", by.y="state")
+
+  colnames(check_vio_uem)<-c("state","year","checking_totals","gun_violence_death","GDP_total","Year", "population",  "GDP_avg")
+  
+  # check_vio_uem_party<-merge(check_vio_uem,states_party,by.x='state',by.y='State')
+  # 
+  check_vio_uem<-check_vio_uem%>%
+    filter(!is.na(gun_violence_death))
+  
+  parcoords(check_vio_uem[c("state","checking_totals","gun_violence_death","GDP_avg")],rownames = FALSE,reorder = TRUE, brushMode="1D",alpha = .3, color = list(colorScale = "scaleOrdinal",colorBy = "state", colorScheme = "schemeCategory10"), withD3 = TRUE)
+  
+    # parcoords(check_vio_uem_party[c("Parties","checking_totals","gun_violence_death","GDP_avg")],rownames = FALSE,reorder = TRUE, brushMode="1D",alpha = .3, color = list(colorScale = "scaleOrdinal",colorBy = "Parties", colorScheme = "schemeCategory10"), withD3 = TRUE)
+  # ggpairs(check_vio_uem[c("checking_totals","gun_violence_death","GDP_avg")])
+}
+Parcoord("2014")
+Parcoord("2015")
+Parcoord("2016")
+Parcoord("2017")
+
+```
