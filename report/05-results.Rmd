@@ -107,7 +107,7 @@ sum_2018 <- ggplot(gun_vio_states_2018 ,aes(x=fct_reorder(state,incident_number)
   labs(y="incident number",x="States")
 ```
 
-```{r,fig.height=16,fig.width=9 echo=FALSE, fig.width=9, r,fig.height=16}
+```{r echo=FALSE}
 grid.arrange(sum_2014,sum_2015,sum_2016,sum_2017,sum_2018,ncol=2)
 ```
 ![Incident Number by States from 2014 to 2018](img/img2.png)
@@ -348,7 +348,7 @@ character['Possession of gun by felon or prohibited person']<-str_detect(charact
 character['Drug involvement']<-str_detect(character$incident_characteristics,'Drug involvement')
 character['Shots Fired']<-str_detect(character$incident_characteristics,'Shots Fired')
 character['Bar/club incident - in or around establishment']<-str_detect(character$incident_characteristics,'Bar/club incident - in or around establishment')
-character['Armed robbery with injury/death and/or evidence of DGU found']<-str_detect(character$incident_characteristics,'Armed robbery with injury/death and/or evidence of DGU found')
+# character['Armed robbery with injury/death and/or evidence of DGU found']<-str_detect(character$incident_characteristics,'Armed robbery with injury/death and/or evidence of DGU found')
 character['Shot - Dead (murder, accidental, suicide)']<-str_detect(character$incident_characteristics,'Dead')
 character['Officer Involved Shooting']<-str_detect(character$incident_characteristics,'Officer Involved Shooting')
 character['Kidnapping/abductions/hostage']<-str_detect(character$incident_characteristics,'Kidnapping/abductions/hostage')
