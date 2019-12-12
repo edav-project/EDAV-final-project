@@ -21,10 +21,6 @@ df_violence_sum <- read_csv("dataset/gun_violence_sum.csv")
 df_ABBstate <- read_csv("dataset/ABBstate.csv")
 df_population <- read_csv("dataset/clean_population_by_state.csv")
 
-df_gun_violence <- read_csv("dataset/gun-violence-data_01-2013_03-2018.csv")
-names(df_gun_violence)[15] <- "lat"
-names(df_gun_violence)[17] <- "lon"
-df_gun_violence$date <- as.character(df_gun_violence$date)
 
 main_map_plotter <- function(input_year,data_new,bind_data,population){
     data_new <- filter(data_new, year == input_year)
@@ -41,12 +37,12 @@ main_map_plotter <- function(input_year,data_new,bind_data,population){
     
     state_popup <- paste0("<strong>State: </strong>",
                           states_merged_value$state,
-                          "<br><strong>Toll per 100,000 people </strong>",
+                          "<br><strong>Causualties per 100,000 people </strong>",
                           round(states_merged_value$rate,2)) %>% lapply(htmltools::HTML)
     
     leaflet(states_merged_value)%>%
       addTiles()%>%
-      setView( -98.483330, 38.712046, zoom = 3 ) %>%
+      setView( -100, 45, zoom = 3 ) %>%
       addPolygons(
         #data = states_merged_value, Don't use this, can't create legend in this way
         layerId=states_merged_value$state,
@@ -57,8 +53,8 @@ main_map_plotter <- function(input_year,data_new,bind_data,population){
         label = state_popup,
         highlight=highlightOptions(weight=10, color="grey",bringToFront=TRUE)
       )%>%
-      addLegend(pal = pal, values = ~rate, na.label = "No value",
-                opacity = 0.5 , title = "Toll per 100k people",
+      addLegend(pal = pal, values = ~rate, na.label = "Unknown",
+                opacity = 0.5 , title = "Casualties per 100k people",
                 position = "bottomleft")
 }
 
@@ -66,31 +62,60 @@ selected_state_plotter <- function(proxy,data_new,input_state,input_year,populat
   proxy  %>% clearPopups()
   
  # print(class(input_year))
-  state_data <- filter(data_new,state == input_state$id,year == input_year )
-  population <- filter(population, year == input_year, state == input_state$id)
+  state_data <- filter(data_new,state == input_state$state,year == input_year )
+  population <- filter(population, year == input_year, state == input_state$state)
   #print(state_data["total_TOLL"]/population["population"]*100000)
   content <- paste0("<strong>State: </strong>",
-                        input_state$id,
-                        "<br><strong>Toll per 100,000 people </strong>",
+                        input_state$state,
+                        "<br><strong>Casualties per 100,000 people </strong>",
                         round(state_data["total_TOLL"]/population["population"]*100000,2)
                         )
   proxy %>% addPopups(input_state$lng, input_state$lat, content)
 }
-heat_map_plotter <- function(input_state,input_year,data){
-  
-  
-  data_new <- data %>%
-    filter(state==input_state) #select state
-  data_new$date <- as.character(data_new$date)
-  data_new$date<-as.Date(data_new$date)
-  data_new["year"]=str_sub( as.character(data_new$date),1,4)
-  data_new <- data_new %>%
-    filter(year==input_year)
-  qmplot(lon,lat,data=data_new,colour=I("red"),zoom=8,size = I(0.8),maptype="toner",alpha=0.3,
-         main= paste0("Gun Violence Spread in ",input_state))+
-    theme(legend.position="none")
-}
 
+
+# heat_map_plotter <- function(input_state,input_year,data){
+#   
+#   
+#   data_new <- data %>%
+#     filter(state==input_state) #select state
+#   data_new$date <- as.character(data_new$date)
+#   data_new$date<-as.Date(data_new$date)
+#   data_new["year"]=str_sub( as.character(data_new$date),1,4)
+#   data_new <- data_new %>%
+#     filter(year==input_year)
+#   qmplot(lon,lat,data=data_new,colour=I("red"),zoom=8,size = I(0.8),maptype="toner",alpha=0.3,
+#          main= paste0("Gun Violence Spread in ",input_state))+
+#     theme(legend.position="none")
+# }
+
+###########################
+## heatmap transform data
+gun_vio_heat=read.csv("dataset/clean gun-violence-data_2013-3-2018-3_new.csv")
+gun_vio_heat["year"]=str_sub( as.character(gun_vio_heat$date),1,4)
+gun_vio_heat <- gun_vio_heat%>%filter(longitude<0) # remove some inaccurate records
+
+# get us state map
+us_states <- map_data("state")
+
+
+#############################
+## function to plot heatmap
+heat_map_plotter <- function(input_state,input_year){
+  violence_clean <-gun_vio_heat %>%
+    filter(state==input_state & year==input_year)
+  print(head(violence_clean))
+  
+  state_clean <- us_states %>%
+    filter(region==tolower(input_state))
+  
+  ggplot()+
+    geom_polygon(data=state_clean, aes(x=long,y=lat,group=group),fill="#FFEDA0",color="grey")+
+    geom_point(data=violence_clean,aes(x=longitude,y=latitude),color="red",size=0.5)+
+    theme_bw()+
+    ggtitle(paste("Gun Violence Spread in",input_state, input_year))
+}
+#heat_map_plotter("Florida",2017)
 
 ###########################
 ## pre data processing for timeseries+pcp
@@ -144,7 +169,7 @@ TimePlot<-function(state)
   # 
   ggplot(gun_vio_month_state)+
     geom_line(aes(x=date_by_month,y=incident_sum),color="#B10026")+
-    ggtitle(paste("Number of Gun Violence Incident \nfrom 01/2014 to 03/2018,",state))+
+    ggtitle(paste("Number of Gun Violence Incidents \nfrom 01/2014 to 03/2018,",state))+
     labs(x="",y="number of incidents")+
     theme_minimal()
 }
@@ -176,10 +201,10 @@ Ranking<-function(year,state)
   ggplot(gun_vio_n_adjust_top10_2 ,aes(x=fct_reorder(state,Toll_avg),y=Toll_avg,fill=colorset))+
     geom_bar(position = "dodge", stat = "identity")+
     coord_flip()+
-    ggtitle(paste0("Top 10 Highest Toll States in ",year))+
+    ggtitle(paste0("Top 10 States with Highest Number \n of Casualties in ",year))+
     scale_fill_manual(values=c("#FEB24C","#E31A1C"))+
     theme(legend.position = "none")+
-    labs(x="",y="Toll per 100k people")
+    labs(x="",y="Casualties per 100k people")
     #theme_minimal()
 }
 
@@ -244,6 +269,7 @@ barCharacter<-function(year,state)
   gun_vio_year_sum_df%>%
     ggplot(aes(x= fct_reorder(key, value),y=value))+
     geom_bar(position = "dodge", stat = "identity",fill = "#FC4E2A",width = 0.8)+
+    geom_text(aes(x= fct_reorder(key, value),y=value+0.1*value,label=value))+
     ggtitle(paste0("Key Types of Gun Violence Incidents\n",state,", ",year))+
     labs(x="",y="Number of incidents")+
     theme_minimal()
@@ -280,7 +306,7 @@ ui = fluidPage(
                 width = 330, height = "auto",
                 
                 h2("Year explorer",align = "center"),
-                h5("Please select an year to explore the toll caused by gun violence in each state"),
+                h5("Please select an year to explore the number of casualties caused by gun violence in each state:"),
                 selectInput("yearSlider","",
                             choices=2018:2014),
                 plotOutput("ranking",height = 350,width =320),
@@ -295,7 +321,7 @@ ui = fluidPage(
                 width = 330,
                 
                 h2("State explorer",align = "center"),
-                h5("Please click on the map to select a state to see the incidents that caused the toll"),
+                h5("Please click on the map to select a state. Below are its incidents trend, location and type:"),
                 
                 wellPanel( width = 300,
                 plotOutput("timeseries", height = 200,width =300),
@@ -304,7 +330,13 @@ ui = fluidPage(
                 style = "overflow-y:scroll; max-height: 550px"
                 ),
                 style = "opacity: 0.8"
+  ),
+  
+  absolutePanel(fixed=TRUE,
+                p("Notes: We only have the first quarter violence data for 2018, so the number of casualties in 2018 is smaller than other years."),
+                helpText(a("Back to Reports", href="https://edav-project.github.io/report/interactive-component.html"))
   )
+  
   #textOutput("temp"，),
   
 )
@@ -317,9 +349,11 @@ server = function(input, output, session) {
   })
   
   #heatmap <- reactiveValues(state = "New York",year = 2018)
-  heatmap <- reactiveValues(state = "New York")
+  heatmap <- reactiveValues(state = "New York",lng = -74, lat = 41 )
   observeEvent(input$map_shape_click,
                {heatmap$state <- input$map_shape_click$id
+               heatmap$lng <- input$map_shape_click$lng
+               heatmap$lat <- input$map_shape_click$lat
                #heatmap$year <- input$yearSlider
                })
   
@@ -330,14 +364,15 @@ server = function(input, output, session) {
   
   # plot heatmap
   output$heatmap <- renderPlot({
-    heat_map_plotter(heatmap$state,input$yearSlider,df_gun_violence)
+    heat_map_plotter(heatmap$state,input$yearSlider)
     #input$map_shape_click
   })
+  
   proxy = leafletProxy("map")
-  observeEvent(input$map_shape_click,
+  observeEvent(heatmap$state,
                selected_state_plotter(proxy,
                                       df_violence_sum,
-                                      input$map_shape_click,
+                                      heatmap,
                                       input$yearSlider,
                                       df_population))
   
