@@ -110,7 +110,7 @@ sum_2018 <- ggplot(gun_vio_states_2018 ,aes(x=fct_reorder(state,incident_number)
 ```{r,fig.height=16,fig.width=9 echo=FALSE, fig.width=9, r,fig.height=16}
 grid.arrange(sum_2014,sum_2015,sum_2016,sum_2017,sum_2018,ncol=2)
 ```
-![Incident Number by States from 2014 to 2018](_bookdown_files/_main_files/figure-html/unnamed-chunk-3-1.png)
+![Incident Number by States from 2014 to 2018](img/img2.png)
 The bar in 2018 is shorter than the bars in other years, it's because we only have the record from Jan to March in 2018. We could find that in 2014 and 2018, California has the most incident number; while in 2015, 2016 and 2017, Illinois has the most incident number. But, does the large number comes from the large population? Maybe it's better to calculate the incident number per 100000 person. The plots are shown below, 
 
 ```{r include=FALSE}
